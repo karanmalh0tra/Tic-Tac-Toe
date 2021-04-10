@@ -59,11 +59,19 @@ public class MainActivity extends AppCompatActivity {
                             //send message of game over to both handler threads
                             status = findViewById(R.id.status);
                             status.setText("Draw Game");
+                            Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
+                            PlayerOneHandler.sendMessage(msg1);
+                            Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
+                            PlayerTwoHandler.sendMessage(msg2);
                         }
                     } else {
                         //send message of game over to both handler threads
                         status = findViewById(R.id.status);
                         status.setText("Player 1 Won!");
+                        Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
+                        PlayerOneHandler.sendMessage(msg1);
+                        Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
+                        PlayerTwoHandler.sendMessage(msg2);
                     }
                     break;
                 case THREAD_TWO_UPDATE:
@@ -77,11 +85,19 @@ public class MainActivity extends AppCompatActivity {
                             //send message of game over to both handler threads
                             status = findViewById(R.id.status);
                             status.setText("Draw Game");
+                            Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
+                            PlayerOneHandler.sendMessage(msg1);
+                            Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
+                            PlayerTwoHandler.sendMessage(msg2);
                         }
                     } else {
                         //send message of game over to both handler threads
                         status = findViewById(R.id.status);
                         status.setText("Player 2 Won!");
+                        Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
+                        PlayerOneHandler.sendMessage(msg1);
+                        Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
+                        PlayerTwoHandler.sendMessage(msg2);
                     }
                     break;
             }
@@ -89,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     //Worker Threads
-    Thread t1;
-    Thread t2;
+    Thread t1 = new Thread(new ThreadOneRunnable());
+    Thread t2 = new Thread(new ThreadTwoRunnable());
 
     //Worker Handlers
     private Handler PlayerOneHandler;
@@ -108,10 +124,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 initializeGame();
-                t1 = new Thread(new ThreadOneRunnable());
-                t1.start();
-                t2 = new Thread(new ThreadTwoRunnable());
-                t2.start();
+                if(t1.isAlive()){
+                    PlayerOneHandler.removeCallbacksAndMessages(null);
+                    PlayerTwoHandler.removeCallbacksAndMessages(null);
+                    mHandler.removeCallbacksAndMessages(null);
+                    t1 = new Thread(new ThreadOneRunnable());
+                    t1.start();
+                }else{
+                    t1 = new Thread(new ThreadOneRunnable());
+                    t1.start();
+                }
+                if(t2.isAlive()){
+                    PlayerOneHandler.removeCallbacksAndMessages(null);
+                    PlayerTwoHandler.removeCallbacksAndMessages(null);
+                    mHandler.removeCallbacksAndMessages(null);
+                    t2 = new Thread(new ThreadTwoRunnable());
+                    t2.start();
+                } else {
+                    t2 = new Thread(new ThreadTwoRunnable());
+                    t2.start();
+                }
+
             }
         });
     }
@@ -120,6 +153,10 @@ public class MainActivity extends AppCompatActivity {
 
         public void run(){
             Log.i(TAG, "run: inside ThreadOneRunnable");
+            // looper condition to avoid another creation
+//            if(Looper.myLooper() == null){
+//                //pass condition check
+//            }
             Looper.prepare();
 
             int index = getPlayer1Index();
@@ -152,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class ThreadTwoRunnable implements Runnable {
+
         public void run(){
             Log.i(TAG, "run: inside ThreadTwoRunnable");
 
@@ -283,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
             Random r = new Random();
             index = r.nextInt(9-0)+0; // gets a random value between 0 and 9
 
-            if(isOccupied[index] == "")
+            if(isOccupied[index].equals(""))
             {
                 break;
             }
