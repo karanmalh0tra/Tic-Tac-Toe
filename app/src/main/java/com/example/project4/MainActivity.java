@@ -1,9 +1,6 @@
 package com.example.project4;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,8 +8,9 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Random;
 
@@ -26,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int THREAD_TWO_UPDATE = 2;
     public static final int THREAD_ONE_HANDLER = 3;
     public static final int THREAD_TWO_HANDLER = 4;
-    public static final int GAME_OVER = 5;
+    public static final int UPDATE_STATUS = 5;
+    public static final int GAME_OVER = 6;
 
     //declaring global variables
     public static String[] isOccupied = new String[9];
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int PLAYER2 = 2;
 
     //Ui Thread Handler
-    private Handler mHandler = new Handler(Looper.getMainLooper()){
+    private final Handler mHandler = new Handler(Looper.getMainLooper()){
         public void handleMessage(Message msg){
             Log.i(TAG, "handleMessage: mHandler has msg.what="+msg.what+"&msg.arg1="+msg.arg1+"&msg.arg2="+msg.arg2);
             int what = msg.what;
@@ -48,56 +47,53 @@ public class MainActivity extends AppCompatActivity {
             int player = msg.arg2;
             int getStatus = placeXor0(index, player);
             switch(what){
+                case UPDATE_STATUS:
+                    if(chances == 9){
+                        endGame("Draw Game!");
+                    } else {
+                        Log.i(TAG, "handleMessage: chances inside UPDATE_STATUS is "+chances);
+                        String text = (String)msg.obj;
+                        status.setText(text);
+                        if(text.equals("Player 1's Move!")){
+                            status.setTextColor(Color.RED);
+                        } else if(text.equals("Player 2's Move!")){
+                            status.setTextColor(Color.BLUE);
+                        }
+                    }
+                    break;
                 case THREAD_ONE_UPDATE:
+                    chances++;
+                    Log.i(TAG, "handleMessage: chances  inside THREAD_ONE_UPDATE is "+chances);
                     if (getStatus == 0) {
                         //game continues
-                        chances++;
-                        if (chances <= 9) {
+                        if (chances < 9) {
                             Message msg1 = PlayerTwoHandler.obtainMessage(THREAD_TWO_HANDLER);
                             PlayerTwoHandler.sendMessage(msg1);
                         } else {
                             //send message of game over to both handler threads
-                            status = findViewById(R.id.status);
-                            status.setText("Draw Game");
-                            Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
-                            PlayerOneHandler.sendMessage(msg1);
-                            Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
-                            PlayerTwoHandler.sendMessage(msg2);
+                            endGame("Draw Game!");
                         }
                     } else {
                         //send message of game over to both handler threads
-                        status = findViewById(R.id.status);
-                        status.setText("Player 1 Won!");
-                        Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
-                        PlayerOneHandler.sendMessage(msg1);
-                        Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
-                        PlayerTwoHandler.sendMessage(msg2);
+                        endGame("Player 1 Won!");
                     }
                     break;
                 case THREAD_TWO_UPDATE:
+                    chances++;
+                    Log.i(TAG, "handleMessage: chances THREAD_TWO_UPDATE is "+chances);
                     if (getStatus == 0) {
                         //game continues
-                        chances++;
-                        if (chances <= 9) {
+
+                        if (chances < 9) {
                             Message msg1 = PlayerOneHandler.obtainMessage(THREAD_ONE_HANDLER);
                             PlayerOneHandler.sendMessage(msg1);
                         } else {
                             //send message of game over to both handler threads
-                            status = findViewById(R.id.status);
-                            status.setText("Draw Game");
-                            Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
-                            PlayerOneHandler.sendMessage(msg1);
-                            Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
-                            PlayerTwoHandler.sendMessage(msg2);
+                            endGame("Draw Game!");
                         }
                     } else {
                         //send message of game over to both handler threads
-                        status = findViewById(R.id.status);
-                        status.setText("Player 2 Won!");
-                        Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
-                        PlayerOneHandler.sendMessage(msg1);
-                        Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
-                        PlayerTwoHandler.sendMessage(msg2);
+                        endGame("Player 2 Won!");
                     }
                     break;
             }
@@ -153,17 +149,16 @@ public class MainActivity extends AppCompatActivity {
 
         public void run(){
             Log.i(TAG, "run: inside ThreadOneRunnable");
-            // looper condition to avoid another creation
-//            if(Looper.myLooper() == null){
-//                //pass condition check
-//            }
             Looper.prepare();
+            Message statusMessage = mHandler.obtainMessage(UPDATE_STATUS);
+            statusMessage.obj = "Player 1's Move!";
+            mHandler.sendMessageDelayed(statusMessage,1000);
 
             int index = getPlayer1Index();
             Message msg = mHandler.obtainMessage(THREAD_ONE_UPDATE);
             msg.arg1 = index;
             msg.arg2 = PLAYER1;
-            mHandler.sendMessageDelayed(msg,2000);
+            mHandler.sendMessageDelayed(msg,1000);
 
             PlayerOneHandler = new Handler(Looper.myLooper()) {
                 public void handleMessage(Message msg) {
@@ -171,11 +166,14 @@ public class MainActivity extends AppCompatActivity {
                     int what = msg.what;
                     switch(what){
                         case THREAD_ONE_HANDLER:
+                            Message statusMessage = mHandler.obtainMessage(UPDATE_STATUS);
+                            statusMessage.obj = "Player 1's Move!";
+                            mHandler.sendMessageDelayed(statusMessage,1000);
                             int index = getPlayer1Index();
                             Message message = mHandler.obtainMessage(THREAD_ONE_UPDATE);
                             message.arg1 = index;
                             message.arg2 = PLAYER1;
-                            mHandler.sendMessageDelayed(message,2000);
+                            mHandler.sendMessageDelayed(message,1000);
                             break;
                         case GAME_OVER:
                             getLooper().quit();
@@ -200,11 +198,14 @@ public class MainActivity extends AppCompatActivity {
                     int what = msg.what;
                     switch(what){
                         case THREAD_TWO_HANDLER:
+                            Message statusMessage = mHandler.obtainMessage(UPDATE_STATUS);
+                            statusMessage.obj = "Player 2's Move!";
+                            mHandler.sendMessageDelayed(statusMessage,1000);
                             int index = getPlayer2Index();
                             Message message = mHandler.obtainMessage(THREAD_TWO_UPDATE);
                             message.arg1 = index;
                             message.arg2 = PLAYER2;
-                            mHandler.sendMessageDelayed(message,2000);
+                            mHandler.sendMessageDelayed(message,1000);
                             break;
                         case GAME_OVER:
                             getLooper().quit();
@@ -229,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         }
         status = findViewById(R.id.status);
         status.setText("");
+        status.setTextColor(Color.BLACK);
         chances = 0;
     }
 
@@ -241,17 +243,33 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "placeXor0: inside Player1 case");
                 t = findViewById(txtArray[index]);
                 t.setText("X");
+                t.setTextColor(Color.RED);
                 isOccupied[index] = "X";
                 break;
             }
             case PLAYER2: {
                 t = findViewById(txtArray[index]);
                 t.setText("0");
+                t.setTextColor(Color.BLUE);
                 isOccupied[index] = "0";
                 break;
             }
         }
         return checkGameStatus();
+    }
+
+    public void endGame(String txt){
+        status = findViewById(R.id.status);
+        status.setText(txt);
+        if(txt.equals("Player 1 Won!")){
+            status.setTextColor(Color.RED);
+        } else if (txt.equals("Player 2 Won!")){
+            status.setTextColor(Color.BLUE);
+        }
+        Message msg1 = PlayerOneHandler.obtainMessage(GAME_OVER);
+        PlayerOneHandler.sendMessage(msg1);
+        Message msg2 = PlayerTwoHandler.obtainMessage(GAME_OVER);
+        PlayerTwoHandler.sendMessage(msg2);
     }
 
     //Return 1 if there's a winner and 0 if there isn't
@@ -316,17 +334,11 @@ public class MainActivity extends AppCompatActivity {
     public int getPlayer2Index()
     {
         int index;
-        while(true)
-        {
+        do {
             Random r = new Random();
-            index = r.nextInt(9-0)+0; // gets a random value between 0 and 9
+            index = r.nextInt(9 - 0) + 0; // gets a random value between 0 and 8
 
-            if(isOccupied[index].equals(""))
-            {
-                break;
-            }
-
-        }
+        } while (!isOccupied[index].equals(""));
         return index;
     }
 }

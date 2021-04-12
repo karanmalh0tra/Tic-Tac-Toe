@@ -13,6 +13,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="15dp"
         android:text="Player 1: X"
+        android:textColor="#F00"
         android:textSize="30sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,6 +25,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="15dp"
         android:text="Player 2: 0"
+        android:textColor="#00F"
         android:textSize="30sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -42,7 +44,7 @@
 
     <TextView
         android:id="@+id/text00"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -51,12 +53,12 @@
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/status"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="2dp"
         android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/text01"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -68,7 +70,7 @@
 
     <TextView
         android:id="@+id/text02"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -80,7 +82,7 @@
 
     <TextView
         android:id="@+id/text10"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -89,11 +91,11 @@
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/text00"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="5dp"/>
+        android:layout_marginLeft="2dp"/>
 
     <TextView
         android:id="@+id/text11"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -105,7 +107,7 @@
 
     <TextView
         android:id="@+id/text12"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -117,7 +119,7 @@
 
     <TextView
         android:id="@+id/text20"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -126,11 +128,11 @@
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/text10"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="5dp"/>
+        android:layout_marginLeft="2dp"/>
 
     <TextView
         android:id="@+id/text21"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
@@ -142,7 +144,7 @@
 
     <TextView
         android:id="@+id/text22"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/my_border"
         android:gravity="center"
         android:layout_width="135dp"
         android:layout_height="135dp"
