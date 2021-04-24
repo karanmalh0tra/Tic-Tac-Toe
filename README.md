@@ -19,10 +19,10 @@ After cloning the repository, import the project into Android Studio. Setup an e
 <table>
     <tr>
         <td>
-            <img src="images/Player-1.png" width="300"/>
+            <img src="images/Player-1.PNG" width="300"/>
         </td>
         <td>
-            <img src="images/Player-2.png" width="300"/>
+            <img src="images/Player-2.PNG" width="300"/>
         </td>
     </tr>
 </table>
