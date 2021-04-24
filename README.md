@@ -14,3 +14,15 @@ This required the use of Handlers, Loopers and MessageQueues in Android.
 
 ## Setting up the environment
 After cloning the repository, import the project into Android Studio. Setup an emulator using AVD manager. The application supports API level 30 (Android 11) and above. The application can then be launched directly and does not require any permission.
+
+## Screenshots
+<table>
+    <tr>
+        <td>
+            <img src="images/Player-1.png" width="300"/>
+        </td>
+        <td>
+            <img src="images/Player-2.png" width="300"/>
+        </td>
+    </tr>
+</table>
